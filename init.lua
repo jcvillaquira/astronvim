@@ -11,14 +11,65 @@ return {
     show_changelog = true, -- show the changelog after performing an update
     auto_quit = false, -- automatically quit the current session after a successful update
     remotes = { -- easily add new remotes to track
-      --   ["remote_name"] = "https://remote_url.come/repo.git", -- full remote url
-      --   ["remote2"] = "github_user/repo", -- GitHub user/repo shortcut,
-      --   ["remote3"] = "github_user", -- GitHub user assume AstroNvim fork
     },
   },
 
   -- Set colorscheme to use
-  colorscheme = "astrodark",
+  -- colorscheme = "onedark", 
+
+  -- Add highlight groups in any theme
+  highlights = {
+    -- init = { -- this table overrides highlights in all themes
+    --   Normal = { bg = "#000000" },
+    -- }
+    -- duskfox = { -- a table of overrides/changes to the duskfox theme
+    --   Normal = { bg = "#000000" },
+    -- },
+  },
+
+  -- Default theme configuration
+  default_theme = {
+    -- Modify the color palette for the default theme
+    colors = {
+      fg = "#abb2bf",
+      bg = "#1e222a",
+    },
+    highlights = function(hl) -- or a function that returns a new table of colors to set
+      local C = require "default_theme.colors"
+
+      hl.Normal = { fg = C.fg, bg = C.bg }
+
+      -- New approach instead of diagnostic_style
+      hl.DiagnosticError.italic = true
+      hl.DiagnosticHint.italic = true
+      hl.DiagnosticInfo.italic = true
+      hl.DiagnosticWarn.italic = true
+
+      return hl
+    end,
+    -- enable or disable highlighting for extra plugins
+    plugins = {
+      aerial = true,
+      beacon = false,
+      bufferline = true,
+      cmp = true,
+      dashboard = true,
+      highlighturl = true,
+      hop = false,
+      indent_blankline = true,
+      lightspeed = false,
+      ["neo-tree"] = true,
+      notify = true,
+      ["nvim-tree"] = false,
+      ["nvim-web-devicons"] = true,
+      rainbow = true,
+      symbols_outline = false,
+      telescope = true,
+      treesitter = true,
+      vimwiki = false,
+      ["which-key"] = true,
+    },
+  },
 
   -- Diagnostics configuration (for vim.diagnostics.config({...})) when diagnostics are on
   diagnostics = {
@@ -26,8 +77,12 @@ return {
     underline = true,
   },
 
+  -- Extend LSP configuration
   lsp = {
-    -- customize lsp formatting options
+    -- enable servers that you already have installed without mason
+    servers = {
+      -- "pyright"
+    },
     formatting = {
       -- control auto formatting on save
       format_on_save = {
@@ -47,19 +102,84 @@ return {
       --   return true
       -- end
     },
-    -- enable servers that you already have installed without mason
-    servers = {
-      -- "pyright"
+    -- easily add or disable built in mappings added during LSP attaching
+    mappings = {
+      n = {
+        -- ["<leader>lf"] = false -- disable formatting keymap
+      },
+    },
+    -- add to the global LSP on_attach function
+    -- on_attach = function(client, bufnr)
+    -- end,
+
+    -- override the mason server-registration function
+    -- server_registration = function(server, opts)
+    --   require("lspconfig")[server].setup(opts)
+    -- end,
+
+    -- Add overrides for LSP server settings, the keys are the name of the server
+    ["server-settings"] = {
+      -- example for addings schemas to yamlls
+      -- yamlls = { -- override table for require("lspconfig").yamlls.setup({...})
+      --   settings = {
+      --     yaml = {
+      --       schemas = {
+      --         ["http://json.schemastore.org/github-workflow"] = ".github/workflows/*.{yml,yaml}",
+      --         ["http://json.schemastore.org/github-action"] = ".github/action.{yml,yaml}",
+      --         ["http://json.schemastore.org/ansible-stable-2.9"] = "roles/tasks/*.{yml,yaml}",
+      --       },
+      --     },
+      --   },
+      -- },
     },
   },
 
-  -- Configure require("lazy").setup() options
-  lazy = {
-    defaults = { lazy = true },
-    performance = {
-      rtp = {
-        -- customize default disabled vim plugins
-        disabled_plugins = { "tohtml", "gzip", "matchit", "zipPlugin", "netrwPlugin", "tarPlugin" },
+  -- Mapping data with "desc" stored directly by vim.keymap.set().
+  --
+  -- Please use this mappings table to set keyboard mapping since this is the
+  -- lower level configuration and more robust one. (which-key will
+  -- automatically pick-up stored data by this setting.)
+
+  -- LuaSnip Options
+  luasnip = {
+    -- Extend filetypes
+    filetype_extend = {
+      -- javascript = { "javascriptreact" },
+    },
+    -- Configure luasnip loaders (vscode, lua, and/or snipmate)
+    vscode = {
+      -- Add paths for including more VS Code style snippets in luasnip
+      paths = {},
+    },
+  },
+
+  -- CMP Source Priorities
+  -- modify here the priorities of default cmp sources
+  -- higher value == higher priority
+  -- The value can also be set to a boolean for disabling default sources:
+  -- false == disabled
+  -- true == 1000
+  cmp = {
+    source_priority = {
+      nvim_lsp = 1000,
+      luasnip = 750,
+      buffer = 500,
+      path = 250,
+    },
+  },
+
+  -- Modify which-key registration (Use this with mappings table in the above.)
+  ["which-key"] = {
+    -- Add bindings which show up as group name
+    register = {
+      -- first key is the mode, n == normal mode
+      n = {
+        -- second key is the prefix, <leader> prefixes
+        ["<leader>"] = {
+          -- third key is the key to bring up next level and its displayed
+          -- group name in which-key top level menu
+          ["b"] = { name = "Buffer" },
+        },
       },
     },
   },
