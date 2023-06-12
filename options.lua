@@ -7,6 +7,7 @@ return function(local_vim)
     local_vim.opt.spell = false
     local_vim.opt.signcolumn = "auto"
     local_vim.opt.wrap = false
+    local_vim.opt.colorcolumn = {81}
     local_vim.g.mapleader = " "
     local_vim.g.autoformat_enabled = true
     local_vim.g.cmp_enabled = true

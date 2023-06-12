@@ -15,7 +15,7 @@ return {
   },
 
   -- Set colorscheme to use
-  -- colorscheme = "onedark", 
+  colorscheme = "onedark", 
 
   -- Add highlight groups in any theme
   highlights = {
